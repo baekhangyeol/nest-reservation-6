@@ -13,6 +13,8 @@ export class RestaurantService {
     private restaurantRepository: Repository<Restaurant>,
     @InjectRepository(User)
     private userRepository: Repository<User>,
+    @InjectRepository(AvailableTime)
+    private availableTimeRepository: Repository<AvailableTime>,
   ) {
   }
 
@@ -24,5 +26,21 @@ export class RestaurantService {
     });
     await this.restaurantRepository.save(restaurant);
     return CreateRestaurantResponseDto.from(restaurant);
+  }
+
+  async addAvailableTime(restaurantId: number, availableTimes: string[]): Promise<void> {
+    const restaurant = await this.restaurantRepository.findOne({
+      where: { id: restaurantId },
+      relations: ['availableTime'],
+    });
+
+    for (const timeString of availableTimes) {
+      const time = new Date(timeString);
+      const newAvailableTime = this.availableTimeRepository.create({
+        time: time,
+        restaurant: restaurant,
+      });
+      await this.availableTimeRepository.save(newAvailableTime);
+    }
   }
 }

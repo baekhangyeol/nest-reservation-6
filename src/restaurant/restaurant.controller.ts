@@ -10,4 +10,9 @@ export class RestaurantController {
   async createRestaurant(@Param('userId') userId: number, @Body() request: CreateRestaurantRequestDto) {
     return this.restaurantService.createRestaurant(request, userId);
   }
+
+  @Post('/:restaurantId/available-time')
+  async addAvailableTime(@Param('restaurantId') restaurantId: number, @Body() request: { availableTime: string[] }) {
+    return this.restaurantService.addAvailableTime(restaurantId, request.availableTime);
+  }
 }
