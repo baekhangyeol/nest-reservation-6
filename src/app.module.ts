@@ -18,6 +18,7 @@ import { RestaurantModule } from './restaurant/restaurant.module';
           password: process.env.DB_PASSWORD,
           database: process.env.DB_DATABASE,
           synchronize: process.env.DB_SYNC === 'true',
+          entities: [__dirname + '/**/*.entity{.ts,.js}'],
           timezone: 'Z',
         };
       },
