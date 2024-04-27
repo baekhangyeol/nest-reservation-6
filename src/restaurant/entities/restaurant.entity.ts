@@ -53,7 +53,7 @@ export class Restaurant {
   reservations: Reservation[];
 
   @ManyToOne(() => User, user => user.restaurants)
-  owner: User;
+  user: User;
 
   @CreateDateColumn()
   createdAt: Date;

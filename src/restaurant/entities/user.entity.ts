@@ -13,6 +13,6 @@ export class User {
   @OneToMany(() => Reservation, reservation => reservation.user)
   reservations: Reservation[];
 
-  @OneToMany(() => Restaurant, restaurant => restaurant.owner)
+  @OneToMany(() => Restaurant, restaurant => restaurant.user)
   restaurants: Restaurant[];
 }
