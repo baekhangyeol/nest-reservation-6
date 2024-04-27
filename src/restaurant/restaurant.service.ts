@@ -5,6 +5,8 @@ import { Repository } from 'typeorm';
 import { User } from './entities/user.entity';
 import { CreateRestaurantRequestDto } from './dto/request/create-restaurant-request.dto';
 import { CreateRestaurantResponseDto } from './dto/response/create-restaurant-response.dto';
+import { AvailableTime } from './entities/availableTime.entity';
+import { GetRestaurantResponseDto } from './dto/response/get-restaurant-response.dto';
 
 @Injectable()
 export class RestaurantService {
@@ -43,4 +45,12 @@ export class RestaurantService {
       await this.availableTimeRepository.save(newAvailableTime);
     }
   }
+
+  async getRestaurantById(restaurantId: number): Promise<GetRestaurantResponseDto> {
+    const restaurant = await this.restaurantRepository.findOne({
+      where: { id: restaurantId },
+      relations: ['images', 'menus', 'availableTime'],
+    })
+    return GetRestaurantResponseDto.from(restaurant);
+    }
 }
