@@ -1,12 +1,25 @@
-import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
+import {
+  Column,
+  CreateDateColumn,
+  Entity,
+  ManyToOne,
+  OneToMany,
+  PrimaryGeneratedColumn,
+  UpdateDateColumn,
+} from 'typeorm';
 import { RestaurantCategory } from './restaurant-category.enum';
+import { Image } from './image.entity';
+import { Menu } from './menu.entity';
+import { AvailableTime } from './availableTime.entity';
+import { User } from './user.entity';
+import { Reservation } from './reservation.entity';
 
 @Entity()
 export class Restaurant {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @Column()
+  @Column({ unique: true })
   name: string;
 
   @Column()
@@ -27,12 +40,24 @@ export class Restaurant {
   @Column()
   logoImage: string;
 
-  @Column()
-  availableTime: string[];
+  @OneToMany(() => AvailableTime, (availableTime) => availableTime.restaurant)
+  availableTime: AvailableTime[];
 
-  @Column()
-  imageList: string[];
+  @OneToMany(() => Image, (image) => image.restaurant)
+  images: Image[];
 
-  @Column()
-  menuList: string[];
+  @OneToMany(() => Menu, (menu) => menu.restaurant)
+  menus: Menu[];
+
+  @OneToMany(() => Reservation, (reservation) => reservation.restaurant)
+  reservations: Reservation[];
+
+  @ManyToOne(() => User, user => user.restaurants)
+  owner: User;
+
+  @CreateDateColumn()
+  createdAt: Date;
+
+  @UpdateDateColumn()
+  updatedAt: Date;
 }
