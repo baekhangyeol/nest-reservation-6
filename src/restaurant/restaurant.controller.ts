@@ -20,4 +20,9 @@ export class RestaurantController {
   async getRestaurantById(@Param('restaurantId') restaurantId: number) {
     return this.restaurantService.getRestaurantById(restaurantId);
   }
+
+  @Get('/:restaurantId/available-time')
+  async getAvailableTimes(@Param('restaurantId') restaurantId: number) {
+    return this.restaurantService.getAvailableTimes(restaurantId);
+  }
 }

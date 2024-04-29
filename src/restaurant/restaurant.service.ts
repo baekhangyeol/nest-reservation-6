@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Restaurant } from './entities/restaurant.entity';
-import { Repository } from 'typeorm';
+import { MoreThanOrEqual, Repository } from 'typeorm';
 import { User } from './entities/user.entity';
 import { CreateRestaurantRequestDto } from './dto/request/create-restaurant-request.dto';
 import { CreateRestaurantResponseDto } from './dto/response/create-restaurant-response.dto';
@@ -52,5 +52,20 @@ export class RestaurantService {
       relations: ['images', 'menus', 'availableTime'],
     })
     return GetRestaurantResponseDto.from(restaurant);
-    }
+  }
+
+  async getAvailableTimes(restaurantId: number): Promise<AvailableTime[]> {
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+
+    return this.availableTimeRepository.find({
+      where: {
+        restaurant: { id: restaurantId },
+        time: MoreThanOrEqual(today),
+      },
+      order: {
+        time: 'ASC',
+      }
+    })
+  }
 }
