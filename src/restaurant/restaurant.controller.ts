@@ -1,6 +1,7 @@
 import { Body, Controller, Get, Param, Post } from '@nestjs/common';
 import { RestaurantService } from './restaurant.service';
 import { CreateRestaurantRequestDto } from './dto/request/create-restaurant-request.dto';
+import { ReservationRestaurantRequestDto } from './dto/request/reservation-restaurant-request.dto';
 
 @Controller('restaurant')
 export class RestaurantController {
@@ -24,5 +25,15 @@ export class RestaurantController {
   @Get('/:restaurantId/available-time')
   async getAvailableTimes(@Param('restaurantId') restaurantId: number) {
     return this.restaurantService.getAvailableTimes(restaurantId);
+  }
+
+  @Post('/:userId/:restaurantId/:availableTimeId/reservation')
+  async reservationRestaurant(
+    @Param('userId') userId: number,
+    @Param('restaurantId') restaurantId: number,
+    @Param('availableTimeId') availableTimeId: number,
+    @Body() request: ReservationRestaurantRequestDto,
+  ) {
+    return this.restaurantService.reservationRestaurant(userId, restaurantId, availableTimeId, request);
   }
 }

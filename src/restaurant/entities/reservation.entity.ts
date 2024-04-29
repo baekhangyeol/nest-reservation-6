@@ -1,6 +1,7 @@
 import { Column, Entity, ManyToOne, PrimaryGeneratedColumn } from 'typeorm';
 import { Restaurant } from './restaurant.entity';
 import { User } from './user.entity';
+import { AvailableTime } from './availableTime.entity';
 
 @Entity()
 export class Reservation {
@@ -22,8 +23,8 @@ export class Reservation {
   @Column()
   request: string;
 
-  @Column()
-  reservationDate: Date;
+  @ManyToOne(() => AvailableTime, availableTime => availableTime.reservations)
+  availableTime: AvailableTime;
 
   @ManyToOne(() => Restaurant, restaurant => restaurant.reservations)
   restaurant: Restaurant;

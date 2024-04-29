@@ -7,6 +7,8 @@ import { CreateRestaurantRequestDto } from './dto/request/create-restaurant-requ
 import { CreateRestaurantResponseDto } from './dto/response/create-restaurant-response.dto';
 import { AvailableTime } from './entities/availableTime.entity';
 import { GetRestaurantResponseDto } from './dto/response/get-restaurant-response.dto';
+import { ReservationRestaurantRequestDto } from './dto/request/reservation-restaurant-request.dto';
+import { Reservation } from './entities/reservation.entity';
 
 @Injectable()
 export class RestaurantService {
@@ -17,6 +19,8 @@ export class RestaurantService {
     private userRepository: Repository<User>,
     @InjectRepository(AvailableTime)
     private availableTimeRepository: Repository<AvailableTime>,
+    @InjectRepository(Reservation)
+    private reservationRepository: Repository<Reservation>,
   ) {
   }
 
@@ -67,5 +71,27 @@ export class RestaurantService {
         time: 'ASC',
       }
     })
+  }
+
+  async reservationRestaurant(userId: number, restaurantId: number, availableTimeId: number, reservationRestaurantRequestDto: ReservationRestaurantRequestDto): Promise<void> {
+    const user = await this.userRepository.findOneBy({ id: userId });
+
+    const restaurant = await this.restaurantRepository.findOne({
+      where: { id: restaurantId },
+    });
+
+    const availableTime = await this.availableTimeRepository.findOne({
+      where: { id: availableTimeId },
+      relations: ['restaurant'],
+    });
+
+    const newReservation = this.reservationRepository.create({
+      ...reservationRestaurantRequestDto,
+      user: user,
+      restaurant: restaurant,
+      availableTime: availableTime,
+    });
+
+    await this.reservationRepository.save(newReservation);
   }
 }

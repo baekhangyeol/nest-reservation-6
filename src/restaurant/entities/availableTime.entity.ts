@@ -1,5 +1,6 @@
-import { Column, Entity, ManyToOne, PrimaryGeneratedColumn } from 'typeorm';
+import { Column, Entity, ManyToOne, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
 import { Restaurant } from './restaurant.entity';
+import { Reservation } from './reservation.entity';
 
 @Entity()
 export class AvailableTime {
@@ -11,4 +12,7 @@ export class AvailableTime {
 
   @ManyToOne(() => Restaurant, restaurant => restaurant.availableTime)
   restaurant: Restaurant;
+
+  @OneToMany(() => Reservation, reservation => reservation.availableTime)
+  reservations: Reservation[];
 }
