@@ -3,6 +3,10 @@ import { RestaurantService } from './restaurant.service';
 import { CreateRestaurantRequestDto } from './dto/request/create-restaurant-request.dto';
 import { ReservationRestaurantRequestDto } from './dto/request/reservation-restaurant-request.dto';
 import { PaginationDto } from '../common/dto/pagination.dto';
+import { PaginationResult } from '../common/util/pagination.util';
+import { CreateRestaurantResponseDto } from './dto/response/create-restaurant-response.dto';
+import { GetRestaurantResponseDto } from './dto/response/get-restaurant-response.dto';
+import { GetRestaurantsResponseDto } from './dto/response/get-restaurants-response.dto';
 
 @Controller('restaurant')
 export class RestaurantController {
@@ -41,5 +45,10 @@ export class RestaurantController {
   @Get('/:userId/reservations')
   async getReservations(@Param('userId') userId: number, @Query() request: PaginationDto) {
     return this.restaurantService.getMyReservations(request, userId);
+  }
+
+  @Get()
+  async getRestaurants(@Query() dto: GetRestaurantsResponseDto): Promise<PaginationResult<GetRestaurantResponseDto>> {
+    return this.restaurantService.getRestaurants(dto);
   }
 }

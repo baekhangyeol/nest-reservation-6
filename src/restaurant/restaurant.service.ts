@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Restaurant } from './entities/restaurant.entity';
-import { MoreThanOrEqual, Repository } from 'typeorm';
+import { Like, MoreThanOrEqual, Repository } from 'typeorm';
 import { User } from './entities/user.entity';
 import { CreateRestaurantRequestDto } from './dto/request/create-restaurant-request.dto';
 import { CreateRestaurantResponseDto } from './dto/response/create-restaurant-response.dto';
@@ -12,6 +12,7 @@ import { Reservation } from './entities/reservation.entity';
 import { PaginationDto } from '../common/dto/pagination.dto';
 import { createPaginationResult, PaginationResult } from '../common/util/pagination.util';
 import { GetReservationsResponseDto } from './dto/response/get-reservations-response.dto';
+import { GetRestaurantsResponseDto } from './dto/response/get-restaurants-response.dto';
 
 @Injectable()
 export class RestaurantService {
@@ -112,5 +113,46 @@ export class RestaurantService {
     const result = reservations.map(reservation => GetReservationsResponseDto.from(reservation));
 
     return createPaginationResult(result, total, dto.page, dto.limit)
+  }
+
+  async getRestaurants(dto: GetRestaurantsResponseDto): Promise<PaginationResult<GetRestaurantResponseDto>> {
+    const whereOptions: any = {};
+
+    if (dto.search) {
+      whereOptions.name = Like(`%${dto.search}%`);
+    }
+
+    if (dto.category) {
+      whereOptions.category = dto.category;
+    }
+
+    let orderOptions: any = {};
+
+    switch (dto.sortBy) {
+      case 'popular':
+        orderOptions = { clickCount: 'DESC' };
+        break;
+      case 'latest':
+        orderOptions = { createdAt: 'DESC' };
+        break;
+      case 'name':
+        orderOptions = { name: 'ASC' };
+        break;
+      default:
+        orderOptions = { createdAt: 'DESC' };
+        break;
+    }
+
+    const [restaurants, total] = await this.restaurantRepository.findAndCount({
+      where: whereOptions,
+      order: orderOptions,
+      take: dto.limit,
+      skip: (dto.page - 1) * dto.limit,
+      relations: ['images', 'menus', 'availableTime'],
+    });
+
+    const result = restaurants.map(restaurant => GetRestaurantResponseDto.from(restaurant));
+
+    return createPaginationResult(result, total, dto.page, dto.limit);
   }
 }
