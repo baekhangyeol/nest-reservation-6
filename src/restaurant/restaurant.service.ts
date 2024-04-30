@@ -58,6 +58,7 @@ export class RestaurantService {
       where: { id: restaurantId },
       relations: ['images', 'menus', 'availableTime'],
     })
+    restaurant.clickCount += 1;
     return GetRestaurantResponseDto.from(restaurant);
   }
 

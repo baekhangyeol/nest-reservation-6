@@ -40,6 +40,9 @@ export class Restaurant {
   @Column()
   logoImage: string;
 
+  @Column()
+  clickCount: number;
+
   @OneToMany(() => AvailableTime, (availableTime) => availableTime.restaurant)
   availableTime: AvailableTime[];
 
