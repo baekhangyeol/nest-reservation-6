@@ -1,7 +1,8 @@
-import { Body, Controller, Get, Param, Post } from '@nestjs/common';
+import { Body, Controller, Get, Param, Post, Query } from '@nestjs/common';
 import { RestaurantService } from './restaurant.service';
 import { CreateRestaurantRequestDto } from './dto/request/create-restaurant-request.dto';
 import { ReservationRestaurantRequestDto } from './dto/request/reservation-restaurant-request.dto';
+import { PaginationDto } from '../common/dto/pagination.dto';
 
 @Controller('restaurant')
 export class RestaurantController {
@@ -35,5 +36,10 @@ export class RestaurantController {
     @Body() request: ReservationRestaurantRequestDto,
   ) {
     return this.restaurantService.reservationRestaurant(userId, restaurantId, availableTimeId, request);
+  }
+
+  @Get('/:userId/reservations')
+  async getReservations(@Param('userId') userId: number, @Query() request: PaginationDto) {
+    return this.restaurantService.getMyReservations(request, userId);
   }
 }

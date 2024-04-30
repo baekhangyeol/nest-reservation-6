@@ -9,6 +9,9 @@ import { AvailableTime } from './entities/availableTime.entity';
 import { GetRestaurantResponseDto } from './dto/response/get-restaurant-response.dto';
 import { ReservationRestaurantRequestDto } from './dto/request/reservation-restaurant-request.dto';
 import { Reservation } from './entities/reservation.entity';
+import { PaginationDto } from '../common/dto/pagination.dto';
+import { createPaginationResult, PaginationResult } from '../common/util/pagination.util';
+import { GetReservationsResponseDto } from './dto/response/get-reservations-response.dto';
 
 @Injectable()
 export class RestaurantService {
@@ -93,5 +96,20 @@ export class RestaurantService {
     });
 
     await this.reservationRepository.save(newReservation);
+  }
+
+  async getMyReservations(dto: PaginationDto, userId: number): Promise<PaginationResult<GetReservationsResponseDto>> {
+    const [reservations, total] = await this.reservationRepository
+      .createQueryBuilder('reservation')
+      .leftJoinAndSelect('reservation.restaurant', 'restaurant')
+      .leftJoinAndSelect('restaurant.user', 'user')
+      .where('reservation.userId = :userId', { userId })
+      .skip((dto.page - 1) * dto.limit)
+      .take(dto.limit)
+      .getManyAndCount();
+
+    const result = reservations.map(reservation => GetReservationsResponseDto.from(reservation));
+
+    return createPaginationResult(result, total, dto.page, dto.limit)
   }
 }

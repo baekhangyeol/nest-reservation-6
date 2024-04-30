@@ -1,4 +1,4 @@
-import { Column, Entity, ManyToOne, PrimaryGeneratedColumn } from 'typeorm';
+import { Column, CreateDateColumn, Entity, ManyToOne, PrimaryGeneratedColumn, UpdateDateColumn } from 'typeorm';
 import { Restaurant } from './restaurant.entity';
 import { User } from './user.entity';
 import { AvailableTime } from './availableTime.entity';
@@ -22,6 +22,12 @@ export class Reservation {
 
   @Column()
   request: string;
+
+  @CreateDateColumn()
+  createdAt: Date;
+
+  @UpdateDateColumn()
+  updatedAt: Date;
 
   @ManyToOne(() => AvailableTime, availableTime => availableTime.reservations)
   availableTime: AvailableTime;
