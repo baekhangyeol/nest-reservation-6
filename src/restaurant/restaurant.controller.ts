@@ -8,6 +8,8 @@ import { CreateRestaurantResponseDto } from './dto/response/create-restaurant-re
 import { GetRestaurantResponseDto } from './dto/response/get-restaurant-response.dto';
 import { GetRestaurantsResponseDto } from './dto/response/get-restaurants-response.dto';
 import JwtAuthenticationGuard from 'src/auth/jwt/jwtAuthentication.guard';
+import { Request } from 'express';
+import { User } from 'src/user/entities/user.entity';
 
 @Controller('restaurant')
 export class RestaurantController {
@@ -44,19 +46,22 @@ export class RestaurantController {
   }
 
   @UseGuards(JwtAuthenticationGuard)
-  @Post('/:userId/:restaurantId/:availableTimeId/reservation')
+  @Post('/:restaurantId/:availableTimeId/reservation')
   async reservationRestaurant(
-    @Param('userId') userId: number,
+    @Req() req: Request,
     @Param('restaurantId') restaurantId: number,
     @Param('availableTimeId') availableTimeId: number,
     @Body() request: ReservationRestaurantRequestDto,
   ) {
-    return this.restaurantService.reservationRestaurant(userId, restaurantId, availableTimeId, request);
+    const user = req.user as User;
+    return this.restaurantService.reservationRestaurant(user.id, restaurantId, availableTimeId, request);
   }
 
-  @Get('/:userId/reservations')
-  async getReservations(@Param('userId') userId: number, @Query() request: PaginationDto) {
-    return this.restaurantService.getMyReservations(request, userId);
+  @UseGuards(JwtAuthenticationGuard)
+  @Get('/reservations')
+  async getReservations(@Req() req: Request, @Query() request: PaginationDto) {
+    const user = req.user as User;
+    return this.restaurantService.getMyReservations(request, user.id);
   }
 
   @Get()
