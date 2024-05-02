@@ -1,6 +1,6 @@
 import { Column, CreateDateColumn, Entity, ManyToOne, PrimaryGeneratedColumn, UpdateDateColumn } from 'typeorm';
 import { Restaurant } from './restaurant.entity';
-import { User } from './user.entity';
+import { User } from '../../user/entities/user.entity';
 import { AvailableTime } from './availableTime.entity';
 
 @Entity()

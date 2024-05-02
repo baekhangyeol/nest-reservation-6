@@ -11,7 +11,7 @@ import { RestaurantCategory } from './restaurant-category.enum';
 import { Image } from './image.entity';
 import { Menu } from './menu.entity';
 import { AvailableTime } from './availableTime.entity';
-import { User } from './user.entity';
+import { User } from '../../user/entities/user.entity';
 import { Reservation } from './reservation.entity';
 
 @Entity()

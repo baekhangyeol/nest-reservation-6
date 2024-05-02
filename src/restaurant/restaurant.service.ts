@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Restaurant } from './entities/restaurant.entity';
 import { Like, MoreThanOrEqual, Repository } from 'typeorm';
-import { User } from './entities/user.entity';
+import { User } from '../user/entities/user.entity';
 import { CreateRestaurantRequestDto } from './dto/request/create-restaurant-request.dto';
 import { CreateRestaurantResponseDto } from './dto/response/create-restaurant-response.dto';
 import { AvailableTime } from './entities/availableTime.entity';

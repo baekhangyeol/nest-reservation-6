@@ -1,6 +1,6 @@
 import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
-import { Restaurant } from './restaurant.entity';
-import { Reservation } from './reservation.entity';
+import { Restaurant } from '../../restaurant/entities/restaurant.entity';
+import { Reservation } from '../../restaurant/entities/reservation.entity';
 
 @Entity()
 export class User {
