@@ -4,10 +4,17 @@ import { ConfigModule } from '@nestjs/config';
 import { addTransactionalDataSource } from 'typeorm-transactional';
 import { DataSource } from 'typeorm';
 import { RestaurantModule } from './restaurant/restaurant.module';
+import Joi from 'joi';
 
 @Module({
   imports: [
-    ConfigModule.forRoot({ isGlobal: true }),
+    ConfigModule.forRoot({
+      isGlobal: true,
+      validationSchema: Joi.object({
+        JWT_SECRET: Joi.string().required(),
+        JWT_EXPIRATION_TIME: Joi.string().required(),
+      }),
+    }),
     TypeOrmModule.forRootAsync({
       useFactory() {
         return {
