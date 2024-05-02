@@ -2,11 +2,16 @@ import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
 import { initializeTransactionalContext } from 'typeorm-transactional';
 import { ValidationPipe } from '@nestjs/common';
+import { ConfigService } from '@nestjs/config';
+import * as cookieParser from 'cookie-parser';
 
 async function bootstrap() {
   initializeTransactionalContext();
 
   const app = await NestFactory.create(AppModule);
+  
+  const configService = app.get(ConfigService);
+  app.use(cookieParser());
 
   app.useGlobalPipes(
     new ValidationPipe({

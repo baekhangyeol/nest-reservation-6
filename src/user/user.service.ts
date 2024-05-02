@@ -8,7 +8,7 @@ import { CreateUserResponseDto } from "./dto/create-user-response.dto";
 export class UserService {
     constructor(
         @InjectRepository(User)
-        private readonly userRepository: Repository<User>,
+        private userRepository: Repository<User>,
     ) { }
     
     async getByEmail(email: string) {
@@ -28,5 +28,16 @@ export class UserService {
         await this.userRepository.save(newUser);
         
         return newUser;
+    }
+
+    async getById(id: number) {
+        const user = await this.userRepository.findOne({ where: { id } });
+        if (user) {
+            return user;
+        }
+        throw new HttpException(
+            '사용자가 존재하지 않습니다.',
+            HttpStatus.NOT_FOUND,
+        );
     }
 }

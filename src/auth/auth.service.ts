@@ -1,10 +1,12 @@
-import { HttpException, HttpStatus } from "@nestjs/common";
+import { HttpException, HttpStatus, Injectable } from "@nestjs/common";
 import { ConfigService } from "@nestjs/config";
 import { JwtService } from "@nestjs/jwt";
 import { compare, hash } from "bcrypt";
 import { CreateUserResponseDto } from "src/user/dto/create-user-response.dto";
 import { UserService } from "src/user/user.service";
+import TokenPayload from "./interfaces/tokenPayload.interface";
 
+@Injectable()
 export class AuthService {
     constructor(
         private readonly userService: UserService,
