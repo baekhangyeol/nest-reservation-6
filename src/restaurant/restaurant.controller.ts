@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Param, Post, Query } from '@nestjs/common';
+import { Body, Controller, Get, Param, Post, Query, Req, UnauthorizedException, UseGuards } from '@nestjs/common';
 import { RestaurantService } from './restaurant.service';
 import { CreateRestaurantRequestDto } from './dto/request/create-restaurant-request.dto';
 import { ReservationRestaurantRequestDto } from './dto/request/reservation-restaurant-request.dto';
@@ -7,6 +7,7 @@ import { PaginationResult } from '../common/util/pagination.util';
 import { CreateRestaurantResponseDto } from './dto/response/create-restaurant-response.dto';
 import { GetRestaurantResponseDto } from './dto/response/get-restaurant-response.dto';
 import { GetRestaurantsResponseDto } from './dto/response/get-restaurants-response.dto';
+import JwtAuthenticationGuard from 'src/auth/jwt/jwtAuthentication.guard';
 
 @Controller('restaurant')
 export class RestaurantController {
@@ -17,8 +18,18 @@ export class RestaurantController {
     return this.restaurantService.createRestaurant(request, userId);
   }
 
+  @UseGuards(JwtAuthenticationGuard)
   @Post('/:restaurantId/available-time')
-  async addAvailableTime(@Param('restaurantId') restaurantId: number, @Body() request: { availableTime: string[] }) {
+  async addAvailableTime(
+    @Req() req,
+    @Param('restaurantId') restaurantId: number, 
+    @Body() request: { availableTime: string[] }
+  ) {
+    const userId = req.user.id;
+    const isOwner = await this.restaurantService.checkOwner(restaurantId, userId);
+    if (!isOwner) {
+      throw new UnauthorizedException('권한이 없습니다.');
+    }
     return this.restaurantService.addAvailableTime(restaurantId, request.availableTime);
   }
 
@@ -32,6 +43,7 @@ export class RestaurantController {
     return this.restaurantService.getAvailableTimes(restaurantId);
   }
 
+  @UseGuards(JwtAuthenticationGuard)
   @Post('/:userId/:restaurantId/:availableTimeId/reservation')
   async reservationRestaurant(
     @Param('userId') userId: number,

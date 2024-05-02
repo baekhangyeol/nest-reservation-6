@@ -155,4 +155,11 @@ export class RestaurantService {
 
     return createPaginationResult(result, total, dto.page, dto.limit);
   }
+
+  async checkOwner(restaurantId: number, userId: number): Promise<boolean> {
+    const restaurant = await this.restaurantRepository.findOne({
+      where: { id: restaurantId, user: { id: userId } },
+    });
+    return !!restaurant;
+  }
 }
